@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, Patch, NotFoundException, HttpCode } from '@nestjs/common';
 import { ContactsService } from './contacts.service';
 import { Contact } from './contacts.service';
 
@@ -9,5 +9,16 @@ export class ContactsController {
   @Get()
   async getAllContacts(): Promise<Contact[]> {
     return this.contactsService.getAllContacts();
+  }
+
+  @Get(':id')
+  async getContactById(@Param('id') id: string): Promise<Contact> {
+    return this.contactsService.getContactById(id);
+  }
+
+  @Patch(':id/favorite')
+  @HttpCode(200)
+  async toggleFavorite(@Param('id') id: string): Promise<Contact> {
+    return this.contactsService.toggleFavorite(id);
   }
 } 
