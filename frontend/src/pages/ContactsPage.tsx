@@ -65,14 +65,14 @@ export function ContactsPage() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Contacts</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">NexusBook</h1>
           <SearchBar 
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
           />
         </div>
       </header>
-      <main className="max-w-7xl mx-auto py-6">
+      <main className="w-full px-4 py-6">
         <ContactList contacts={filteredContacts} />
         {filteredContacts.length === 0 && searchQuery && (
           <div className="text-center text-gray-500 mt-8">

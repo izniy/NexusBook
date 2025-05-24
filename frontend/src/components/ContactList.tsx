@@ -14,11 +14,11 @@ interface ContactListProps {
 }
 
 export function ContactList({ contacts }: ContactListProps) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
-      {contacts.map(contact => (
-        <ContactCard key={contact.id} contact={contact} />
-      ))}
-    </div>
-  );
-} 
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6 px-6 py-8">
+        {contacts.map((contact) => (
+          <ContactCard key={contact.id} contact={contact} />
+        ))}
+      </div>
+    );
+}
