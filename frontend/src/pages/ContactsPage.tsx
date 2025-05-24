@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { ContactList } from '../components/ContactList';
 import { SearchBar } from '../components/SearchBar';
+import { ContactModal } from '../components/ContactModal';
 
 interface Contact {
   id: string;
@@ -15,6 +16,7 @@ interface Contact {
 export function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,12 +75,20 @@ export function ContactsPage() {
         </div>
       </header>
       <main className="w-full px-4 py-6">
-        <ContactList contacts={filteredContacts} />
+        <ContactList 
+          contacts={filteredContacts} 
+          onContactSelect={setSelectedContact}
+        />
         {filteredContacts.length === 0 && searchQuery && (
           <div className="text-center text-gray-500 mt-8">
             No contacts found matching "{searchQuery}"
           </div>
         )}
+        <ContactModal
+          contact={selectedContact}
+          isOpen={selectedContact !== null}
+          onClose={() => setSelectedContact(null)}
+        />
       </main>
     </div>
   );
