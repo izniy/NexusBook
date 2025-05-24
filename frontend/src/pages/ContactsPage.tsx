@@ -47,6 +47,19 @@ export function ContactsPage() {
     );
   }, [contacts, searchQuery]);
 
+  // Update contact in the contacts array after favorite toggle
+  const handleContactUpdate = async (updatedContact: Contact) => {
+    setContacts(prevContacts => 
+      prevContacts.map(contact => 
+        contact.id === updatedContact.id ? updatedContact : contact
+      )
+    );
+    // Also update selected contact if it's the one being modified
+    if (selectedContact?.id === updatedContact.id) {
+      setSelectedContact(updatedContact);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -74,10 +87,15 @@ export function ContactsPage() {
           />
         </div>
       </header>
-      <main className="w-full px-4 py-6">
+      <main className="px-12 py-8">
         <ContactList 
-          contacts={filteredContacts} 
-          onContactSelect={setSelectedContact}
+          contacts={filteredContacts}
+          onContactSelect={(contact) => {
+            const latest = contacts.find(c => c.id === contact.id);
+            if (latest) {
+              setSelectedContact({ ...latest });
+            }
+          }}
         />
         {filteredContacts.length === 0 && searchQuery && (
           <div className="text-center text-gray-500 mt-8">
@@ -88,6 +106,7 @@ export function ContactsPage() {
           contact={selectedContact}
           isOpen={selectedContact !== null}
           onClose={() => setSelectedContact(null)}
+          onUpdate={handleContactUpdate}
         />
       </main>
     </div>
