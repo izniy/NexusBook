@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
 import { ContactList } from '../components/ContactList';
 import { SearchBar } from '../components/SearchBar';
 import { ContactModal } from '../components/ContactModal';
+import { getContacts } from '../services/api';
 
 interface Contact {
   id: string;
@@ -24,8 +24,8 @@ export function ContactsPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get<Contact[]>('http://localhost:3000/contacts');
-      setContacts(response.data);
+      const data = await getContacts();
+      setContacts(data);
       setError(null);
     } catch (err) {
       setError('Failed to fetch contacts. Please try again later.');
@@ -49,14 +49,12 @@ export function ContactsPage() {
     );
   }, [contacts, searchQuery]);
 
-  // Update contact in the contacts array after favorite toggle
-  const handleContactUpdate = async (updatedContact: Contact) => {
+  const handleContactUpdate = (updatedContact: Contact) => {
     setContacts(prevContacts => 
       prevContacts.map(contact => 
         contact.id === updatedContact.id ? updatedContact : contact
       )
     );
-    // Also update selected contact if it's the one being modified
     if (selectedContact?.id === updatedContact.id) {
       setSelectedContact(updatedContact);
     }
