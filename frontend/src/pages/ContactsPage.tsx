@@ -20,20 +20,22 @@ export function ContactsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const response = await axios.get<Contact[]>('http://localhost:3000/contacts');
-        setContacts(response.data);
-        setError(null);
-      } catch (err) {
-        setError('Failed to fetch contacts. Please try again later.');
-        console.error('Error fetching contacts:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchContacts = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get<Contact[]>('http://localhost:3000/contacts');
+      setContacts(response.data);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch contacts. Please try again later.');
+      console.error('Error fetching contacts:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchContacts();
   }, []);
 
@@ -62,16 +64,27 @@ export function ContactsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl text-gray-600">Loading contacts...</div>
+      <div className="wrapper">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+          <div className="text-5xl mb-4">⌛</div>
+          <h2>Loading your contacts...</h2>
+          <p className="text-gray-500">Just a moment while we fetch everything.</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl text-red-600">{error}</div>
+      <div className="wrapper">
+        <div className="error-block min-h-[60vh]">
+          <div className="text-5xl mb-4">😢</div>
+          <h2>Oops! Something went wrong.</h2>
+          <p>{error}</p>
+          <button onClick={fetchContacts}>
+            🔄 Retry
+          </button>
+        </div>
       </div>
     );
   }
@@ -79,27 +92,33 @@ export function ContactsPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">NexusBook</h1>
-          <SearchBar 
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
+        <div className="wrapper">
+          <h1>NexusBook</h1>
+          <div className="max-w-3xl mx-auto mt-6">
+            <SearchBar 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+          </div>
         </div>
       </header>
-      <main className="px-12 py-8">
-        <ContactList 
-          contacts={filteredContacts}
-          onContactSelect={(contact) => {
-            const latest = contacts.find(c => c.id === contact.id);
-            if (latest) {
-              setSelectedContact({ ...latest });
-            }
-          }}
-        />
+      <main className="wrapper">
+        <div className="contacts-grid">
+          <ContactList 
+            contacts={filteredContacts}
+            onContactSelect={(contact) => {
+              const latest = contacts.find(c => c.id === contact.id);
+              if (latest) {
+                setSelectedContact({ ...latest });
+              }
+            }}
+          />
+        </div>
         {filteredContacts.length === 0 && searchQuery && (
-          <div className="text-center text-gray-500 mt-8">
-            No contacts found matching "{searchQuery}"
+          <div className="error-block">
+            <div className="text-4xl mb-4">🔍</div>
+            <h2>No Results Found</h2>
+            <p>No contacts found matching "{searchQuery}"</p>
           </div>
         )}
         <ContactModal

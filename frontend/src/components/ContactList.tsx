@@ -16,18 +16,18 @@ interface ContactListProps {
 
 export function ContactList({ contacts, onContactSelect }: ContactListProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6 px-6 py-8">
+    <>
       {contacts.map((contact) => (
         <div
           key={contact.id}
-          className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200"
+          className="contact-card cursor-pointer"
           onClick={() => onContactSelect(contact)}
         >
           <div className="relative">
             <img
               src={contact.picture}
               alt={contact.name}
-              className="w-full h-48 object-cover"
+              className="contact-card-image"
             />
             {contact.isFavorite && (
               <div className="absolute top-2 right-2 bg-yellow-400 rounded-full p-1">
@@ -44,13 +44,13 @@ export function ContactList({ contacts, onContactSelect }: ContactListProps) {
               </div>
             )}
           </div>
-          <div className="p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{contact.name}</h3>
-            <p className="text-gray-600 text-sm mb-1">{contact.email}</p>
-            <p className="text-gray-600 text-sm">{contact.phone}</p>
+          <div className="contact-card-content">
+            <h3 className="contact-card-title">{contact.name}</h3>
+            <p className="contact-card-text">{contact.email}</p>
+            <p className="contact-card-text">{contact.phone}</p>
           </div>
         </div>
       ))}
-    </div>
+    </>
   );
 }
