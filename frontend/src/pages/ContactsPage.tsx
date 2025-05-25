@@ -4,7 +4,7 @@ import { ContactList } from '../components/ContactList';
 import { SearchBar } from '../components/SearchBar';
 import { ContactModal } from '../components/ContactModal';
 import type { RootState, AppDispatch } from '../store/store';
-import { fetchContacts, selectContact, toggleFavorite } from '../store/contactsSlice';
+import { fetchContacts, selectContact, toggleFavorite, setCurrentPage } from '../store/contactsSlice';
 import { useEffect } from 'react';
 
 interface Contact {
@@ -18,12 +18,12 @@ interface Contact {
 
 export function ContactsPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const { contacts, loading, error, selectedContact } = useSelector((state: RootState) => state.contacts);
+  const { contacts, loading, error, selectedContact, currentPage, totalPages, limit } = useSelector((state: RootState) => state.contacts);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
+    dispatch(fetchContacts({ page: currentPage, limit }));
+  }, [dispatch, currentPage, limit]);
 
   const filteredContacts = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
@@ -37,6 +37,65 @@ export function ContactsPage() {
 
   const handleContactUpdate = async (contact: Contact) => {
     await dispatch(toggleFavorite(contact.id));
+  };
+
+  const handlePageChange = (newPage: number) => {
+    dispatch(setCurrentPage(newPage));
+  };
+
+  const renderPaginationControls = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-1 mx-1 rounded ${
+            currentPage === i
+              ? 'bg-blue-500 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex items-center justify-center mt-6 space-x-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 rounded ${
+            currentPage === 1
+              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          Previous
+        </button>
+        {pages}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`px-4 py-2 rounded ${
+            currentPage === totalPages
+              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          Next
+        </button>
+      </div>
+    );
   };
 
   if (loading) {
@@ -58,7 +117,7 @@ export function ContactsPage() {
           <div className="text-5xl mb-4">😢</div>
           <h2>Oops! Something went wrong.</h2>
           <p>{error}</p>
-          <button onClick={() => dispatch(fetchContacts())}>
+          <button onClick={() => dispatch(fetchContacts({ page: currentPage, limit }))}>
             🔄 Retry
           </button>
         </div>
@@ -98,6 +157,7 @@ export function ContactsPage() {
             <p>No contacts found matching "{searchQuery}"</p>
           </div>
         )}
+        {filteredContacts.length > 0 && renderPaginationControls()}
         <ContactModal
           contact={selectedContact}
           isOpen={selectedContact !== null}

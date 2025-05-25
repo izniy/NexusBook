@@ -9,10 +9,18 @@ interface Contact {
   isFavorite: boolean;
 }
 
+interface PaginatedResponse {
+  contacts: Contact[];
+  totalPages: number;
+  currentPage: number;
+}
+
 const BASE_URL = 'http://localhost:3000';
 
-export const getContacts = async (): Promise<Contact[]> => {
-  const response = await axios.get<Contact[]>(`${BASE_URL}/contacts`);
+export const getContacts = async (page = 1, limit = 20): Promise<PaginatedResponse> => {
+  const response = await axios.get<PaginatedResponse>(`${BASE_URL}/contacts`, {
+    params: { page, limit }
+  });
   return response.data;
 };
 

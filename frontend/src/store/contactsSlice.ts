@@ -16,6 +16,14 @@ interface ContactsState {
   selectedContact: Contact | null;
   loading: boolean;
   error: string | null;
+  currentPage: number;
+  totalPages: number;
+  limit: number;
+}
+
+interface FetchContactsParams {
+  page?: number;
+  limit?: number;
 }
 
 const initialState: ContactsState = {
@@ -23,12 +31,15 @@ const initialState: ContactsState = {
   selectedContact: null,
   loading: false,
   error: null,
+  currentPage: 1,
+  totalPages: 1,
+  limit: 20
 };
 
 export const fetchContacts = createAsyncThunk(
   'contacts/fetchContacts',
-  async () => {
-    const response = await getContacts();
+  async ({ page = 1, limit = 20 }: FetchContactsParams = {}) => {
+    const response = await getContacts(page, limit);
     return response;
   }
 );
@@ -57,6 +68,9 @@ const contactsSlice = createSlice({
         state.selectedContact = action.payload;
       }
     },
+    setCurrentPage: (state: ContactsState, action: PayloadAction<number>) => {
+      state.currentPage = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -64,9 +78,11 @@ const contactsSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchContacts.fulfilled, (state: ContactsState, action: PayloadAction<Contact[]>) => {
+      .addCase(fetchContacts.fulfilled, (state: ContactsState, action: PayloadAction<{ contacts: Contact[]; totalPages: number; currentPage: number }>) => {
         state.loading = false;
-        state.contacts = action.payload;
+        state.contacts = action.payload.contacts;
+        state.totalPages = action.payload.totalPages;
+        state.currentPage = action.payload.currentPage;
       })
       .addCase(fetchContacts.rejected, (state: ContactsState) => {
         state.loading = false;
@@ -84,5 +100,5 @@ const contactsSlice = createSlice({
   },
 });
 
-export const { selectContact, updateContact } = contactsSlice.actions;
+export const { selectContact, updateContact, setCurrentPage } = contactsSlice.actions;
 export default contactsSlice.reducer; 

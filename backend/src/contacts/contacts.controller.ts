@@ -6,10 +6,11 @@ import {
   NotFoundException, 
   HttpCode,
   HttpStatus,
+  Query,
   Logger
 } from '@nestjs/common';
 import { ContactsService } from './contacts.service';
-import { Contact } from './contacts.service';
+import { Contact } from './contact.interface';
 
 @Controller('contacts')
 export class ContactsController {
@@ -19,11 +20,19 @@ export class ContactsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getAllContacts(): Promise<Contact[]> {
-    this.logger.log('GET /contacts - Retrieving all contacts');
-    const contacts = await this.contactsService.getAllContacts();
-    this.logger.debug(`Retrieved ${contacts.length} contacts`);
-    return contacts;
+  async getAllContacts(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10
+  ): Promise<{ contacts: Contact[]; totalPages: number; currentPage: number }> {
+    this.logger.log(`GET /contacts - Retrieving contacts (page: ${page}, limit: ${limit})`);
+    try {
+      const result = await this.contactsService.getPaginatedContacts(Number(page), Number(limit));
+      this.logger.debug(`Retrieved ${result.contacts.length} contacts (page ${result.currentPage} of ${result.totalPages})`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Failed to retrieve paginated contacts:`, error.message);
+      throw error;
+    }
   }
 
   @Get(':id')
@@ -32,11 +41,15 @@ export class ContactsController {
     this.logger.log(`GET /contacts/${id} - Retrieving contact by ID`);
     try {
       const contact = await this.contactsService.getContactById(id);
+      if (!contact) {
+        this.logger.warn(`Contact with ID ${id} not found`);
+        throw new NotFoundException(`Contact with ID ${id} not found`);
+      }
       this.logger.debug(`Successfully retrieved contact with ID: ${id}`);
       return contact;
     } catch (error) {
       this.logger.error(`Failed to retrieve contact with ID ${id}:`, error.message);
-      throw error; // Let NestJS handle the error response
+      throw error;
     }
   }
 
@@ -46,11 +59,15 @@ export class ContactsController {
     this.logger.log(`PATCH /contacts/${id}/favorite - Toggling favorite status`);
     try {
       const contact = await this.contactsService.toggleFavorite(id);
+      if (!contact) {
+        this.logger.warn(`Contact with ID ${id} not found`);
+        throw new NotFoundException(`Contact with ID ${id} not found`);
+      }
       this.logger.debug(`Successfully toggled favorite status for contact ID: ${id}`);
       return contact;
     } catch (error) {
       this.logger.error(`Failed to toggle favorite status for contact ID ${id}:`, error.message);
-      throw error; // Let NestJS handle the error response
+      throw error;
     }
   }
 } 
