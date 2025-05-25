@@ -1,8 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ContactList } from '../components/ContactList';
 import { SearchBar } from '../components/SearchBar';
 import { ContactModal } from '../components/ContactModal';
-import { getContacts } from '../services/api';
+import type { RootState, AppDispatch } from '../store/store';
+import { fetchContacts, selectContact, toggleFavorite } from '../store/contactsSlice';
+import { useEffect } from 'react';
 
 interface Contact {
   id: string;
@@ -14,30 +17,13 @@ interface Contact {
 }
 
 export function ContactsPage() {
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const { contacts, loading, error, selectedContact } = useSelector((state: RootState) => state.contacts);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchContacts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getContacts();
-      setContacts(data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch contacts. Please try again later.');
-      console.error('Error fetching contacts:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchContacts();
-  }, []);
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   const filteredContacts = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
@@ -49,15 +35,8 @@ export function ContactsPage() {
     );
   }, [contacts, searchQuery]);
 
-  const handleContactUpdate = (updatedContact: Contact) => {
-    setContacts(prevContacts => 
-      prevContacts.map(contact => 
-        contact.id === updatedContact.id ? updatedContact : contact
-      )
-    );
-    if (selectedContact?.id === updatedContact.id) {
-      setSelectedContact(updatedContact);
-    }
+  const handleContactUpdate = async (contact: Contact) => {
+    await dispatch(toggleFavorite(contact.id));
   };
 
   if (loading) {
@@ -79,7 +58,7 @@ export function ContactsPage() {
           <div className="text-5xl mb-4">😢</div>
           <h2>Oops! Something went wrong.</h2>
           <p>{error}</p>
-          <button onClick={fetchContacts}>
+          <button onClick={() => dispatch(fetchContacts())}>
             🔄 Retry
           </button>
         </div>
@@ -104,10 +83,10 @@ export function ContactsPage() {
         <div className="contacts-grid">
           <ContactList 
             contacts={filteredContacts}
-            onContactSelect={(contact) => {
-              const latest = contacts.find(c => c.id === contact.id);
+            onContactSelect={(contact: Contact) => {
+              const latest = contacts.find((c: Contact) => c.id === contact.id);
               if (latest) {
-                setSelectedContact({ ...latest });
+                dispatch(selectContact({ ...latest }));
               }
             }}
           />
@@ -122,7 +101,7 @@ export function ContactsPage() {
         <ContactModal
           contact={selectedContact}
           isOpen={selectedContact !== null}
-          onClose={() => setSelectedContact(null)}
+          onClose={() => dispatch(selectContact(null))}
           onUpdate={handleContactUpdate}
         />
       </main>
