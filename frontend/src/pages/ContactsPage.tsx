@@ -16,10 +16,13 @@ interface Contact {
   isFavorite: boolean;
 }
 
+type SortOption = 'nameAsc' | 'nameDesc' | 'emailAsc' | 'emailDesc';
+
 export function ContactsPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { contacts, loading, error, selectedContact, currentPage, totalPages, limit } = useSelector((state: RootState) => state.contacts);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<SortOption>('nameAsc');
 
   useEffect(() => {
     dispatch(fetchContacts({ page: currentPage, limit }));
@@ -27,13 +30,31 @@ export function ContactsPage() {
 
   const filteredContacts = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
-    if (!query) return contacts;
+    
+    // First, filter contacts
+    const filtered = query 
+      ? contacts.filter(contact => 
+          contact.name.toLowerCase().includes(query) ||
+          contact.email.toLowerCase().includes(query)
+        )
+      : contacts;
 
-    return contacts.filter(contact => 
-      contact.name.toLowerCase().includes(query) ||
-      contact.email.toLowerCase().includes(query)
-    );
-  }, [contacts, searchQuery]);
+    // Then, sort the filtered results
+    return [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'nameAsc':
+          return a.name.localeCompare(b.name);
+        case 'nameDesc':
+          return b.name.localeCompare(a.name);
+        case 'emailAsc':
+          return a.email.localeCompare(b.email);
+        case 'emailDesc':
+          return b.email.localeCompare(a.email);
+        default:
+          return 0;
+      }
+    });
+  }, [contacts, searchQuery, sortBy]);
 
   const handleContactUpdate = async (contact: Contact) => {
     await dispatch(toggleFavorite(contact.id));
@@ -42,6 +63,22 @@ export function ContactsPage() {
   const handlePageChange = (newPage: number) => {
     dispatch(setCurrentPage(newPage));
   };
+
+  const renderSortDropdown = () => (
+    <div className="mb-6">
+      <select
+        value={sortBy}
+        onChange={(e) => setSortBy(e.target.value as SortOption)}
+        className="block w-full md:w-48 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        aria-label="Sort contacts"
+      >
+        <option value="nameAsc">Name (A–Z)</option>
+        <option value="nameDesc">Name (Z–A)</option>
+        <option value="emailAsc">Email (A–Z)</option>
+        <option value="emailDesc">Email (Z–A)</option>
+      </select>
+    </div>
+  );
 
   const renderPaginationControls = () => {
     const pages = [];
@@ -139,6 +176,7 @@ export function ContactsPage() {
         </div>
       </header>
       <main className="wrapper">
+        {renderSortDropdown()}
         <div className="contacts-grid">
           <ContactList 
             contacts={filteredContacts}
