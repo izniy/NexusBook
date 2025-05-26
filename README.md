@@ -27,18 +27,6 @@ NexusBook is a modern, full-stack contact management application that helps you 
 - **Random User API** integration
 - **In-memory data storage**
 
-## 📁 Project Structure
-
-```
-nexusbook/
-├── frontend/          # React frontend application
-│   └── README.md     # Frontend documentation
-├── backend/          # NestJS backend API
-│   └── README.md     # Backend documentation
-└── docs/             # Documentation assets
-    └── screenshots/  # Application screenshots
-```
-
 ## �� Quick Start
 
 1. **Backend Setup**
