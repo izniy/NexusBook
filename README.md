@@ -2,8 +2,6 @@
 
 NexusBook is a modern, full-stack contact management application that helps you organize and interact with your contacts through a beautiful, responsive interface.
 
-![NexusBook Screenshot](docs/screenshots/preview.png)
-
 ## ✨ Features
 
 - 👥 Browse contacts with a modern card-based layout
@@ -46,20 +44,6 @@ For detailed setup instructions, environment configuration, and development guid
 - [Frontend Documentation](frontend/README.md) - React application details
 - [Backend Documentation](backend/README.md) - API and server details
 
-## 📸 Screenshots
-
-### Contact List View
-![Contact List](docs/screenshots/contacts.png)
-*Modern grid layout with search and sorting*
-
-### Contact Details
-![Contact Details](docs/screenshots/details.png)
-*Detailed contact information with favorite toggle*
-
-### Mobile View
-![Mobile Interface](docs/screenshots/mobile.png)
-*Responsive design for all devices*
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -67,10 +51,6 @@ For detailed setup instructions, environment configuration, and development guid
 3. Commit your changes
 4. Push to the branch
 5. Open a Pull Request
-
-## 📝 License
-
-This project is MIT licensed.
 
 ---
 
