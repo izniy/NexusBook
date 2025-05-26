@@ -75,7 +75,7 @@ This is the frontend interface of NexusBook, built using React, Redux Toolkit, a
 
 The development server will run at `http://localhost:5173`
 
-## 📁 Component Structure
+## 📁 Project Structure
 
 ```
 src/
@@ -131,12 +131,6 @@ The application uses Redux Toolkit for efficient state management:
   - Keyboard navigation
   - Focus management
   - Screen reader support
-
-## 📸 Screenshots
-
-[Coming Soon]
-
-*Add screenshots or GIFs showcasing the frontend interface*
 
 ---
 
