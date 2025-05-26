@@ -35,7 +35,7 @@ This is the frontend interface of NexusBook, built using React, Redux Toolkit, a
 
 The development server will run at `http://localhost:5173`
 
-## 📁 Component Structure
+## 📁 Project Structure
 
 ```
 src/
