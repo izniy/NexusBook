@@ -92,12 +92,6 @@ The application uses Redux Toolkit for efficient state management:
   - Focus management
   - Screen reader support
 
-## 📸 Screenshots
-
-[Coming Soon]
-
-*Add screenshots or GIFs showcasing the frontend interface*
-
 ---
 
 Made with ❤️ using React & Redux
