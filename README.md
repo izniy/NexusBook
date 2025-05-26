@@ -13,6 +13,23 @@ NexusBook is a modern, full-stack contact management application that helps you 
 - 📱 Fully responsive design
 - ⚡ Real-time feedback and smooth transitions
 
+## 🎯 Design Decisions
+
+### Architecture
+- **Frontend/Backend Split**: Separated for clear concerns, independent scaling, and easier maintenance. This allows the frontend to focus on UX while the backend handles data and business logic.
+- **Stateless Design**: No persistent storage needed, demonstrating clean architecture without database complexity.
+
+### Technology Choices
+- **NestJS Backend**: Chosen for its robust architecture, TypeScript support, and excellent developer experience with decorators and dependency injection.
+- **React + Redux Frontend**: Provides predictable state management and component reusability, essential for a responsive contact manager.
+- **Vite**: Offers superior development experience with instant HMR and optimized production builds.
+- **In-Memory Storage**: Simplifies deployment and demonstrates clean architecture without database complexity.
+
+### Performance Considerations
+- Client-side filtering and sorting reduce server load
+- Efficient caching strategy minimizes external API calls
+- Modular code structure enables code splitting
+
 ## 🛠 Technology Stack
 
 ### Frontend
@@ -27,7 +44,7 @@ NexusBook is a modern, full-stack contact management application that helps you 
 - **Random User API** integration
 - **In-memory data storage**
 
-## �� Quick Start
+## 🛠 Quick Start
 
 1. **Backend Setup**
    - Go to [`/backend`](backend/README.md)

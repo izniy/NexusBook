@@ -12,6 +12,46 @@ This is the frontend interface of NexusBook, built using React, Redux Toolkit, a
 - 📄 Dynamic pagination with configurable page size
 - ⚡ Loading states and error handling
 
+## 🎯 Design Decisions
+
+### State Management
+- **Redux Toolkit**: Chosen for its:
+  - Predictable state updates
+  - DevTools integration for debugging
+  - Built-in immutability handling
+  - Simplified async operations with createAsyncThunk
+  - Type safety with TypeScript
+
+### UI Framework Choices
+- **Tailwind CSS**: Selected for:
+  - Utility-first approach speeds development
+  - Built-in responsive design system
+  - Consistent design language
+  - Small production bundle size
+  - Easy customization
+
+### User Experience
+- **Card-Based Layout**:
+  - Visual hierarchy improves scanning
+  - Natural grid system for responsive design
+  - Modal view for detailed information
+  - Smooth transitions between states
+
+### Performance Optimizations
+- **Client-Side Operations**:
+  - Search and filtering handled locally
+  - Pagination state managed in-browser
+  - Minimized API calls
+  - Debounced search input
+
+### Accessibility
+- **WCAG Compliance**:
+  - Semantic HTML structure
+  - ARIA labels and roles
+  - Keyboard navigation support
+  - High contrast ratios
+  - Screen reader optimization
+
 ## 🛠 Technologies
 
 - **React 18** - Modern UI development

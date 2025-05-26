@@ -10,6 +10,41 @@ This backend serves as the data provider for the NexusBook app. It fetches, cach
 - **Random User API** - Data source for contacts
 - **In-memory Storage** - No database required
 
+## 🎯 Design Decisions
+
+### Architecture Choices
+- **NestJS Modular Design**: Contacts module is isolated for better maintainability and potential future scaling
+- **Controller-Service Pattern**: Clear separation between route handling and business logic
+- **Dependency Injection**: Leverages NestJS's DI container for loose coupling and testability
+
+### Storage Strategy
+- **In-Memory Caching**: Chosen for simplicity and performance
+  - No database setup required for demo purposes
+  - Fast access to contact data
+  - Favorite status tracked efficiently using Map
+  - Trade-off: Data persistence not needed for demo scope
+
+### External Communication
+- **Axios for HTTP**: Selected for its:
+  - Promise-based API
+  - Request/response interceptors
+  - Automatic JSON transformation
+  - Robust error handling
+
+### Error Management
+- **Structured Error Handling**:
+  - HTTP exceptions for client errors
+  - Global exception filter for consistency
+  - Detailed error messages in development
+  - Sanitized errors in production
+
+### Logging Strategy
+- **Tiered Logging Levels**:
+  - Debug logs for development
+  - Error tracking in production
+  - Performance metrics
+  - API request/response logging
+
 ## ⚙️ Setup & Configuration
 
 1. Create a `.env` file in the backend directory:
