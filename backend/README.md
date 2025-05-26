@@ -69,7 +69,7 @@ src/
 └── main.ts                    # Application entry point
 ```
 
-> **Note:** The default `app.controller.ts` and `app.service.ts` files were removed in favor of a modular `contacts/` feature structure.
+> **Note:** The default `app.controller.ts` and `app.service.ts` files are unused in favor of a modular `contacts/` feature structure.
 
 ## 🧪 Testing
 
